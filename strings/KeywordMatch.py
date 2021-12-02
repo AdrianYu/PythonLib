@@ -9,8 +9,9 @@ class Node(object):
 
 
 class TreeMatch(object):
-    head_node = Node()
-    # node_map = dict()
+
+    def __init__(self):
+        self.head_node = Node()
 
     # given a list of words, push into Match Trees
     def build(self, words_list):
@@ -41,21 +42,21 @@ class TreeMatch(object):
             for idx in iter_range:
                 pre_node = pre_nodes[idx]
                 temp_res = temp_res_list[idx]
-                if w in pre_node.sub_words: # which means there is a match in current subwords
+                if w in pre_node.sub_words:  # which means there is a match in current subwords
                     cur_node = pre_node.sub_words[w]
-                else: # no match at all
+                else:  # no match at all
                     cur_node = self.head_node
                     temp_res = list()
                     valid_index.remove(idx)
-                for i, _ in enumerate(temp_res): # temp result forward
+                for i, _ in enumerate(temp_res):  # temp result forward
                     temp_res[i] += w
-                if cur_node.is_tail: # all temp results are real match
+                if cur_node.is_tail:  # all temp results are real match
                     found_keywords |= set(temp_res)
                     if find_once:
                         return found_keywords
                 pre_nodes[idx] = cur_node
 
-            if w in self.head_node.sub_words: # we need to check if we need to start over from head node
+            if w in self.head_node.sub_words:  # we need to check if we need to start over from head node
                 pre_nodes.append(self.head_node.sub_words[w])
                 temp_res_list.append([w])
                 valid_index.add(len(temp_res_list) - 1)
@@ -63,26 +64,3 @@ class TreeMatch(object):
 
     def is_match(self, sentence):
         return len(self.find(sentence, True)) > 0
-
-
-if __name__ == '__main__':
-    keywords = ['你好', '你好啊', '放大', '权威的', '的a']
-
-    tm = TreeMatch()
-    tm.build(keywords)
-
-    sentence = ''
-    print(tm.find(sentence))
-
-    sentence = '恭亲王'
-    print(tm.find(sentence))
-
-    sentence = '你好啊发生了点权威'
-    print(tm.find(sentence))
-
-    sentence = '你权威的好'
-    print(tm.find(sentence))
-
-    sentence = '你权威的a的'
-    print(tm.find(sentence))
-
